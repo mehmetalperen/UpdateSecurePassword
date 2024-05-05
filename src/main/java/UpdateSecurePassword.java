@@ -34,22 +34,27 @@ public class UpdateSecurePassword {
         int alterCustomerResult = statement.executeUpdate(alterCustomerQuery);
         System.out.println("altering customers table schema completed, " + alterCustomerResult + " rows affected");
 
-        String alterEmployeeQuery = "ALTER TABLE employees MODIFY COLUMN password VARCHAR(128)";
-        int alterEmployeeResult = statement.executeUpdate(alterEmployeeQuery);
-        System.out.println("altering employees table schema completed, " + alterEmployeeResult + " rows affected");
 
         String customerQuery = "SELECT id, password from customers";
         ResultSet customerRs = statement.executeQuery(customerQuery);
 
+        String alterEmployeeQuery = "ALTER TABLE employees MODIFY COLUMN password VARCHAR(128)";
+
+        Statement stmt = connection.createStatement();
+        int alterEmployeeResult = stmt.executeUpdate(alterEmployeeQuery);
+        System.out.println("altering employees table schema completed, " + alterEmployeeResult + " rows affected");
+
         String employeeQuery = "SELECT email, password FROM employees";
-        ResultSet employeeRs = statement.executeQuery(employeeQuery);
+        ResultSet employeeRs = stmt.executeQuery(employeeQuery);
 
 
         PasswordEncryptor passwordEncryptor = new StrongPasswordEncryptor();
 
+
         ArrayList<String> updateQueryList = new ArrayList<>();
 
-        System.out.println("encrypting customer passwords (this might take a while)");
+        int i = 0;
+        System.out.println(customerRs);
         while (customerRs.next()) {
 
             String id = customerRs.getString("id");
@@ -86,7 +91,5 @@ public class UpdateSecurePassword {
         connection.close();
 
         System.out.println("finished");
-
     }
-
 }
